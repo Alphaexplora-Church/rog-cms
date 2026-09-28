@@ -1,0 +1,58 @@
+{
+  "kind": "collectionType",
+  "collectionName": "ministries",
+  "info": {
+    "singularName": "ministry",
+    "pluralName": "ministries",
+    "displayName": "Ministry",
+    "description": "One ministry on the public Ministries page. `ministryType` decides which section it appears in (Ages of the River, Service Ministries, Body of Christ Ministries) and which of the fields below the Manage Contents wizard asks for."
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "ministryType": {
+      "type": "enumeration",
+      "enum": ["ages", "service", "body"],
+      "required": true
+    },
+    "name": {
+      "type": "string",
+      "required": true
+    },
+    "slug": {
+      "type": "uid",
+      "targetField": "name",
+      "required": true
+    },
+    "ages": {
+      "type": "string"
+    },
+    "subtitle": {
+      "type": "string"
+    },
+    "description": {
+      "type": "text",
+      "required": true
+    },
+    "quote": {
+      "type": "text"
+    },
+    "contactName": {
+      "type": "string"
+    },
+    "contactNumber": {
+      "type": "string"
+    },
+    "hashtags": {
+      "type": "string"
+    },
+    "coverPhoto": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
+      "allowedTypes": ["images"]
+    }
+  }
+}
