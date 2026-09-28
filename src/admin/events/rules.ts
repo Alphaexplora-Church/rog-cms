@@ -15,9 +15,11 @@ export type FieldKey =
   | 'eventName'
   | 'eventDate'
   | 'eventTime'
+  | 'eventEndTime'
   | 'eventLocation'
   | 'eventDescription'
   | 'headerPhoto'
+  | 'registrationLink'
 
 export type Errors = Partial<Record<FieldKey, string>>
 
@@ -36,6 +38,14 @@ export function validateContents(d: EventDraft): Errors {
 
   if (!d.headerPhoto?.file && !d.headerPhoto?.existing) e.headerPhoto = 'Add a header photo.'
   else if (fileTooBig(d.headerPhoto?.file)) e.headerPhoto = 'This image is over 200 MB.'
+
+  // Both optional, so only checked when given.
+  if (d.eventEndTime && d.eventTime && d.eventEndTime <= d.eventTime) {
+    e.eventEndTime = 'End time should be after the start time.'
+  }
+  if (d.registrationLink.trim() && !/^https?:\/\//i.test(d.registrationLink.trim())) {
+    e.registrationLink = 'Enter a full link starting with https:// or http://'
+  }
 
   return e
 }
@@ -70,4 +80,14 @@ export function formatTime(iso: string | null | undefined): string {
   const [h, m] = hhmm.split(':').map(Number)
   const d = new Date(2000, 0, 1, h, m)
   return d.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })
+}
+
+/** "2:30 PM – 4:00 PM", or just the start when there's no end time. */
+export function formatDuration(start: string | null | undefined, end: string | null | undefined): string {
+  const s = formatTime(start)
+  if (!end) return s
+  const e = formatTime(end)
+  if (s === '—') return e
+  if (e === '—') return s
+  return `${s} – ${e}`
 }

@@ -10,6 +10,7 @@
     "dev": "strapi develop",
     "develop": "strapi develop",
     "start": "strapi start",
+    "start:qa": "dotenv -e .env.qa -- strapi start",
     "strapi": "strapi",
     "upgrade": "npx @strapi/upgrade latest",
     "upgrade:dry": "npx @strapi/upgrade latest --dry"
@@ -32,6 +33,7 @@
   },
   "devDependencies": {
     "@types/node": "^20",
+    "dotenv-cli": "^7.4.4",
     "@types/react": "^18",
     "@types/react-dom": "^18",
     "typescript": "^5"

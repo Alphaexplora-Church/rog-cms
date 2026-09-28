@@ -35,7 +35,14 @@ const PAD = ((VISIBLE - 1) / 2) * ROW
 const LOOP_COPIES = 5 // looping drums render the list 5×, and live in the middle copy
 
 const HOURS = ['12', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11']
-const MINUTES = Array.from({ length: 60 }, (_, i) => String(i).padStart(2, '0'))
+/**
+ * Only :00 and :30 are pickable (Jude, 2026-09-28: "make sure na kapag
+ * mamimili ng minute, dapat 30 & 00 lang ang options, not 00-59"). `minute`
+ * on `Parts` is this array's INDEX (0 or 1), same convention as `period`'s
+ * index into PERIODS — not the literal minute number, which is why
+ * `parse`/`format` below snap a stored HH:mm to the nearest of the two.
+ */
+const MINUTES = ['00', '30']
 const PERIODS = ['AM', 'PM']
 
 interface Parts {
@@ -48,12 +55,17 @@ function parse(hhmm: string): Parts | null {
   const m = hhmm.match(/^(\d{2}):(\d{2})/)
   if (!m) return null
   const h = Number(m[1])
-  return { hour: h % 12, minute: Number(m[2]), period: h >= 12 ? 1 : 0 }
+  // Snap whatever minute is stored (older entries may have any 0–59 value)
+  // to the nearest of the two pickable marks, so an existing time still
+  // opens somewhere sensible on the wheel instead of pointing off the end
+  // of a 2-row array.
+  const minute = Math.round(Number(m[2]) / 30) % MINUTES.length
+  return { hour: h % 12, minute, period: h >= 12 ? 1 : 0 }
 }
 
 function format(p: Parts): string {
   const h = p.hour + (p.period === 1 ? 12 : 0)
-  return `${String(h).padStart(2, '0')}:${String(p.minute).padStart(2, '0')}`
+  return `${String(h).padStart(2, '0')}:${MINUTES[p.minute]}`
 }
 
 function label(p: Parts): string {

@@ -50,20 +50,29 @@ export interface EventDraft {
   /** Strapi's stored HH:mm:ss.SSS. The TimeWheel works in "HH:mm";
    *  ContentStep converts at the field (toIsoTime/fromIsoTime, rules.ts). */
   eventTime: string
+  /** End of the event, same shape/format as eventTime. Optional — added
+   *  2026-09-28 for a "Duration" line on the website. Empty string means
+   *  no end time set. */
+  eventEndTime: string
   /** Where it happens — added 2026-09-25 (Jude: "lagyan mo din pala ng
    *  Event Location"). */
   eventLocation: string
   eventDescription: string
   headerPhoto: FileSlot | null
+  /** Optional external URL. When set, the website shows a "Click here to
+   *  register" button. Added 2026-09-28. */
+  registrationLink: string
 }
 
 export const EMPTY_DRAFT: EventDraft = {
   eventName: '',
   eventDate: '',
   eventTime: '',
+  eventEndTime: '',
   eventLocation: '',
   eventDescription: '',
   headerPhoto: null,
+  registrationLink: '',
 }
 
 export interface EventRow {
@@ -140,9 +149,11 @@ export async function loadEvent(client: FetchClient, documentId: string): Promis
     eventName: s.eventName ?? '',
     eventDate: s.eventDate ?? '',
     eventTime: s.eventTime ?? '',
+    eventEndTime: s.eventEndTime ?? '',
     eventLocation: s.eventLocation ?? '',
     eventDescription: s.eventDescription ?? '',
     headerPhoto: photo ? { existing: photo } : null,
+    registrationLink: s.registrationLink ?? '',
   }
 }
 
@@ -193,9 +204,11 @@ export async function publishEvent(
     eventName: draft.eventName.trim(),
     eventDate: draft.eventDate,
     eventTime: draft.eventTime,
+    eventEndTime: draft.eventEndTime || null,
     eventLocation: draft.eventLocation.trim(),
     eventDescription: draft.eventDescription.trim(),
     headerPhoto: photoId,
+    registrationLink: draft.registrationLink.trim() || null,
   }
 
   if (draft.documentId) {

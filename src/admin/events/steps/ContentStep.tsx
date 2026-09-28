@@ -102,15 +102,29 @@ export function ContentStep({ draft, patch, errors }: ContentStepProps) {
               <Field.Error />
             </Field.Root>
           </Grid.Item>
-          <Grid.Item col={6} s={12} direction="column" alignItems="stretch">
+          <Grid.Item col={3} s={6} direction="column" alignItems="stretch">
             <Field.Root name="eventTime" error={errors.eventTime} required>
-              <Field.Label>Event Time</Field.Label>
+              <Field.Label>Start Time</Field.Label>
               <TimeWheel
                 value={fromIsoTime(draft.eventTime)}
                 onChange={(t) => patch({ eventTime: t ? toIsoTime(t) : '' })}
                 onClear={() => patch({ eventTime: '' })}
                 clearLabel="Clear time"
               />
+              <Field.Error />
+            </Field.Root>
+          </Grid.Item>
+          <Grid.Item col={3} s={6} direction="column" alignItems="stretch">
+            <Field.Root name="eventEndTime" error={errors.eventEndTime} hint="Optional.">
+              <Field.Label>End Time</Field.Label>
+              <TimeWheel
+                value={fromIsoTime(draft.eventEndTime)}
+                onChange={(t) => patch({ eventEndTime: t ? toIsoTime(t) : '' })}
+                onClear={() => patch({ eventEndTime: '' })}
+                clearLabel="Clear time"
+                defaultTime={fromIsoTime(draft.eventTime) || '09:00'}
+              />
+              <Field.Hint />
               <Field.Error />
             </Field.Root>
           </Grid.Item>
@@ -161,6 +175,23 @@ export function ContentStep({ draft, patch, errors }: ContentStepProps) {
             />
           </Grid.Item>
         </Grid.Root>
+      </Section>
+
+      <Section n={next()} title="Registration">
+        <Field.Root
+          name="registrationLink"
+          error={errors.registrationLink}
+          hint={'Optional. When set, the website shows a "Click here to register" button on this event.'}
+        >
+          <Field.Label>Registration Link</Field.Label>
+          <Field.Input
+            value={draft.registrationLink}
+            placeholder="https://forms.gle/..."
+            onChange={(e) => patch({ registrationLink: e.target.value })}
+          />
+          <Field.Hint />
+          <Field.Error />
+        </Field.Root>
       </Section>
     </Flex>
   )

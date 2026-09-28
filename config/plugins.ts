@@ -79,6 +79,15 @@ const config = ({ env }: Core.Config.Shared.ConfigParams): Core.Config.Plugin =>
         ? {
             provider: 'aws-s3',
             providerOptions: {
+              /**
+               * Supabase's S3-compatible endpoint (`/storage/v1/s3`) is for
+               * the upload protocol only. Public read URLs live on a
+               * different path (`/storage/v1/object/public/<bucket>`), so
+               * the provider's default URL-building (which just reuses the
+               * S3 endpoint) produces a broken link. `baseUrl` overrides
+               * that and is what actually gets used for every asset's URL.
+               */
+              baseUrl: `${env('S3_ENDPOINT', '').replace('/storage/v1/s3', '/storage/v1/object/public')}/${env('S3_BUCKET')}`,
               s3Options: {
                 endpoint: env('S3_ENDPOINT'),
                 region: env('S3_REGION', 'us-east-1'),

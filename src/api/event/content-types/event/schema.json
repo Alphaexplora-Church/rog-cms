@@ -29,9 +29,17 @@
       "type": "time",
       "required": true
     },
+    "eventEndTime": {
+      "type": "time",
+      "required": false
+    },
     "eventLocation": {
       "type": "string",
       "required": true
+    },
+    "registrationLink": {
+      "type": "string",
+      "required": false
     },
     "eventDescription": {
       "type": "text",

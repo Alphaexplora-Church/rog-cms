@@ -2,7 +2,7 @@ import { Box, Flex, Grid, TextButton, Typography } from '@strapi/design-system'
 import { Pencil } from '@strapi/icons'
 import { useEffect, useMemo } from 'react'
 import type { EventDraft } from '../api'
-import { formatDate, formatTime } from '../rules'
+import { formatDate, formatDuration, formatTime } from '../rules'
 
 /**
  * Phase 2 — Review/Publish. Same layout as the Media Library wizard's
@@ -45,7 +45,9 @@ export function ReviewStep({ draft, onEditDetails }: { draft: EventDraft; onEdit
   const photoLocal = useObjectUrl(draft.headerPhoto?.file)
   const photo = photoLocal ?? draft.headerPhoto?.existing?.url
 
-  const meta = [formatDate(draft.eventDate), formatTime(draft.eventTime)].filter((v) => v !== '—').join(' · ')
+  const meta = [formatDate(draft.eventDate), formatDuration(draft.eventTime, draft.eventEndTime)]
+    .filter((v) => v !== '—')
+    .join(' · ')
 
   return (
     <Flex direction="column" alignItems="stretch" gap={5}>
@@ -101,13 +103,18 @@ export function ReviewStep({ draft, onEditDetails }: { draft: EventDraft; onEdit
           <Box background="neutral0" hasRadius shadow="tableShadow" paddingLeft={6} paddingRight={6} paddingTop={2} paddingBottom={2}>
             <Row label="Event Name" value={draft.eventName || '—'} onEdit={onEditDetails} />
             <Row label="Event Date" value={formatDate(draft.eventDate)} onEdit={onEditDetails} />
-            <Row label="Event Time" value={formatTime(draft.eventTime)} onEdit={onEditDetails} />
+            <Row label="Duration" value={formatDuration(draft.eventTime, draft.eventEndTime)} onEdit={onEditDetails} />
             <Row label="Event Location" value={draft.eventLocation || '—'} onEdit={onEditDetails} />
             <Row label="Description" value={draft.eventDescription || '—'} onEdit={onEditDetails} />
             <Row
               label="Header Photo"
               onEdit={onEditDetails}
               value={draft.headerPhoto?.file?.name ?? draft.headerPhoto?.existing?.name ?? '—'}
+            />
+            <Row
+              label="Registration Link"
+              onEdit={onEditDetails}
+              value={draft.registrationLink || 'None — no button shown on the website'}
             />
           </Box>
         </Grid.Item>
