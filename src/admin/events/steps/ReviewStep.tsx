@@ -2,7 +2,7 @@ import { Box, Flex, Grid, TextButton, Typography } from '@strapi/design-system'
 import { Pencil } from '@strapi/icons'
 import { useEffect, useMemo } from 'react'
 import type { EventDraft } from '../api'
-import { formatDate, formatDuration, formatTime } from '../rules'
+import { formatDate, formatDuration } from '../rules'
 
 /**
  * Phase 2 — Review/Publish. Same layout as the Media Library wizard's
