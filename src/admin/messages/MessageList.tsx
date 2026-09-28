@@ -141,7 +141,7 @@ export default function MessageList() {
             </Box>
           ) : (
             <>
-              <Table colCount={6} rowCount={rows.length + 1}>
+              <Table className="rog-list rog-list-messages" colCount={6} rowCount={rows.length + 1}>
                 <Thead>
                   <Tr>
                     <Th><Typography variant="sigma">Title</Typography></Th>
@@ -157,8 +157,11 @@ export default function MessageList() {
                     <Tr key={r.documentId} onClick={() => open(r.documentId)} style={{ cursor: 'pointer' }}>
                       <Td style={{ maxWidth: 380 }}>
                         <Flex direction="column" alignItems="flex-start" gap={0}>
-                          <Typography fontWeight="semiBold" ellipsis style={{ maxWidth: 360 }}>
+                          <Typography className="rog-cell-title" fontWeight="semiBold" ellipsis style={{ maxWidth: 360 }}>
                             {r.title}
+                          </Typography>
+                          <Typography className="rog-show-sm" variant="pi" textColor="neutral600">
+                            {`${r.category === 'series' ? 'Series' : 'Sermon'} · ${formatDate(r.date)}`}
                           </Typography>
                           {r.seriesTitle ? (
                             <Typography variant="pi" textColor="neutral600">

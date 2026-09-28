@@ -128,7 +128,7 @@ export function DetailsStep({ draft, patch, errors }: DetailsStepProps) {
   const cover = () => (
     <Section n={next()} title="Cover photo">
       <Grid.Root gap={5}>
-        <Grid.Item col={6} s={12} direction="column" alignItems="stretch">
+        <Grid.Item col={6} s={12} xs={12} direction="column" alignItems="stretch">
           <FileDrop
             kind="image"
             label="Cover Photo"
@@ -161,10 +161,10 @@ export function DetailsStep({ draft, patch, errors }: DetailsStepProps) {
         <>
           <Section n={next()} title="Name and ages">
             <Grid.Root gap={5}>
-              <Grid.Item col={7} s={12} direction="column" alignItems="stretch">
+              <Grid.Item col={7} s={12} xs={12} direction="column" alignItems="stretch">
                 <Text name="name" label="Ministry Name" required value={draft.name} onChange={(v) => patch({ name: v })} error={errors.name} placeholder="e.g. River Kids" />
               </Grid.Item>
-              <Grid.Item col={5} s={12} direction="column" alignItems="stretch">
+              <Grid.Item col={5} s={12} xs={12} direction="column" alignItems="stretch">
                 <Text
                   name="ages"
                   label="Ages"
@@ -223,10 +223,10 @@ export function DetailsStep({ draft, patch, errors }: DetailsStepProps) {
           </Section>
           <Section n={next()} title="Contact">
             <Grid.Root gap={5}>
-              <Grid.Item col={6} s={12} direction="column" alignItems="stretch">
+              <Grid.Item col={6} s={12} xs={12} direction="column" alignItems="stretch">
                 <Text name="contactName" label="Contact Name" required value={draft.contactName} onChange={(v) => patch({ contactName: v })} error={errors.contactName} placeholder="e.g. Olga Lomuntad" hint="Who volunteers should reach out to." />
               </Grid.Item>
-              <Grid.Item col={6} s={12} direction="column" alignItems="stretch">
+              <Grid.Item col={6} s={12} xs={12} direction="column" alignItems="stretch">
                 <Text name="contactNumber" label="Contact Number" required inputMode="tel" value={draft.contactNumber} onChange={(v) => patch({ contactNumber: v })} error={errors.contactNumber} placeholder="e.g. 0917 116 3975" hint="Tapping it on a phone dials it." />
               </Grid.Item>
             </Grid.Root>
@@ -250,10 +250,10 @@ export function DetailsStep({ draft, patch, errors }: DetailsStepProps) {
         <>
           <Section n={next()} title="Title and subtitle">
             <Grid.Root gap={5}>
-              <Grid.Item col={7} s={12} direction="column" alignItems="stretch">
+              <Grid.Item col={7} s={12} xs={12} direction="column" alignItems="stretch">
                 <Text name="name" label="Title" required value={draft.name} onChange={(v) => patch({ name: v })} error={errors.name} placeholder="e.g. Soaking in the River" />
               </Grid.Item>
-              <Grid.Item col={5} s={12} direction="column" alignItems="stretch">
+              <Grid.Item col={5} s={12} xs={12} direction="column" alignItems="stretch">
                 <Text name="subtitle" label="Subtitle" value={draft.subtitle} onChange={(v) => patch({ subtitle: v })} error={errors.subtitle} placeholder="e.g. Events, activities & testimonies" hint="The short line in the pill under the title." />
               </Grid.Item>
             </Grid.Root>

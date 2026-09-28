@@ -18,6 +18,7 @@ function useObjectUrl(file: File | undefined) {
 function Row({ label, value, onEdit }: { label: string; value: ReactNode; onEdit: () => void }) {
   return (
     <Flex
+      className="rog-review-row"
       tag="div"
       paddingTop={3}
       paddingBottom={3}
@@ -25,7 +26,7 @@ function Row({ label, value, onEdit }: { label: string; value: ReactNode; onEdit
       alignItems="flex-start"
       style={{ borderBottom: '1px solid var(--rog-review-line, rgba(128,128,128,0.18))' }}
     >
-      <Box style={{ flex: '0 0 150px' }}>
+      <Box className="rog-review-label" style={{ flex: '0 0 150px' }}>
         <Typography variant="sigma" textColor="neutral600">
           {label}
         </Typography>
@@ -91,7 +92,7 @@ export function SummaryStep({
       </Flex>
 
       <Grid.Root gap={5}>
-        <Grid.Item col={5} s={12} direction="column" alignItems="stretch">
+        <Grid.Item col={5} s={12} xs={12} direction="column" alignItems="stretch">
           <Box background="neutral0" hasRadius shadow="tableShadow" padding={4}>
             <Typography variant="sigma" textColor="neutral600">
               Website preview · {TYPE_LABEL[type]}
@@ -129,7 +130,7 @@ export function SummaryStep({
           </Box>
         </Grid.Item>
 
-        <Grid.Item col={7} s={12} direction="column" alignItems="stretch">
+        <Grid.Item col={7} s={12} xs={12} direction="column" alignItems="stretch">
           <Box background="neutral0" hasRadius shadow="tableShadow" paddingLeft={6} paddingRight={6} paddingTop={2} paddingBottom={2}>
             <Row label="Type of Ministry" value={TYPE_LABEL[type]} onEdit={onEditType} />
             <Row label={nameLabel(type)} value={value('name')} onEdit={onEditDetails} />

@@ -57,14 +57,14 @@ const SECTIONS: SectionDef[] = [
 
 export function SectionsHub() {
   return (
-    <Box padding={8}>
+    <Box padding={{ initial: 4, small: 6, medium: 8 }}>
       <Typography variant="alpha" tag="h1">
         Sections
       </Typography>
       <Box paddingTop={6}>
         <Grid.Root gap={5}>
           {SECTIONS.map((s) => (
-            <Grid.Item key={s.key} col={4} s={12} direction="column" alignItems="stretch">
+            <Grid.Item key={s.key} col={4} s={12} xs={12} direction="column" alignItems="stretch">
               <Link to={s.to} className="rog-section-card" aria-label={`Open ${s.label}`}>
                 <Box background="neutral0" hasRadius shadow="tableShadow" padding={6}>
                   <Flex gap={3} alignItems="center">

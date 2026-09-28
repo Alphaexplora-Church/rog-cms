@@ -159,7 +159,7 @@ export default function MinistryList() {
             </Box>
           ) : (
             <>
-              <Table colCount={5} rowCount={rows.length + 1}>
+              <Table className="rog-list rog-list-ministries" colCount={5} rowCount={rows.length + 1}>
                 <Thead>
                   <Tr>
                     <Th><Typography variant="sigma">Name</Typography></Th>
@@ -173,8 +173,11 @@ export default function MinistryList() {
                   {rows.map((r) => (
                     <Tr key={r.documentId} onClick={() => open(r.documentId)} style={{ cursor: 'pointer' }}>
                       <Td style={{ maxWidth: 360 }}>
-                        <Typography fontWeight="semiBold" ellipsis style={{ maxWidth: 340 }}>
+                        <Typography className="rog-cell-title" fontWeight="semiBold" ellipsis style={{ maxWidth: 340 }}>
                           {r.name}
+                        </Typography>
+                        <Typography className="rog-show-sm" variant="pi" textColor="neutral600">
+                          {TYPE_LABEL[r.ministryType]}
                         </Typography>
                       </Td>
                       <Td>

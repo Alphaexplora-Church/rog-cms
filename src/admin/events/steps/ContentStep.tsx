@@ -78,7 +78,7 @@ export function ContentStep({ draft, patch, errors }: ContentStepProps) {
 
       <Section n={next()} title="Name, date, time and place">
         <Grid.Root gap={5}>
-          <Grid.Item col={12} s={12} direction="column" alignItems="stretch">
+          <Grid.Item col={12} s={12} xs={12} direction="column" alignItems="stretch">
             <Field.Root name="eventName" error={errors.eventName} required>
               <Field.Label>Event Name</Field.Label>
               <Field.Input
@@ -89,7 +89,7 @@ export function ContentStep({ draft, patch, errors }: ContentStepProps) {
               <Field.Error />
             </Field.Root>
           </Grid.Item>
-          <Grid.Item col={6} s={12} direction="column" alignItems="stretch">
+          <Grid.Item col={6} s={12} xs={12} direction="column" alignItems="stretch">
             <Field.Root name="eventDate" error={errors.eventDate} required>
               <Field.Label>Event Date</Field.Label>
               <DatePicker
@@ -102,7 +102,7 @@ export function ContentStep({ draft, patch, errors }: ContentStepProps) {
               <Field.Error />
             </Field.Root>
           </Grid.Item>
-          <Grid.Item col={3} s={6} direction="column" alignItems="stretch">
+          <Grid.Item col={3} s={6} xs={12} direction="column" alignItems="stretch">
             <Field.Root name="eventTime" error={errors.eventTime} required>
               <Field.Label>Start Time</Field.Label>
               <TimeWheel
@@ -114,7 +114,7 @@ export function ContentStep({ draft, patch, errors }: ContentStepProps) {
               <Field.Error />
             </Field.Root>
           </Grid.Item>
-          <Grid.Item col={3} s={6} direction="column" alignItems="stretch">
+          <Grid.Item col={3} s={6} xs={12} direction="column" alignItems="stretch">
             <Field.Root name="eventEndTime" error={errors.eventEndTime} hint="Optional.">
               <Field.Label>End Time</Field.Label>
               <TimeWheel
@@ -128,7 +128,7 @@ export function ContentStep({ draft, patch, errors }: ContentStepProps) {
               <Field.Error />
             </Field.Root>
           </Grid.Item>
-          <Grid.Item col={12} s={12} direction="column" alignItems="stretch">
+          <Grid.Item col={12} s={12} xs={12} direction="column" alignItems="stretch">
             <Field.Root
               name="eventLocation"
               error={errors.eventLocation}
@@ -163,7 +163,7 @@ export function ContentStep({ draft, patch, errors }: ContentStepProps) {
 
       <Section n={next()} title="Header photo">
         <Grid.Root gap={5}>
-          <Grid.Item col={6} s={12} direction="column" alignItems="stretch">
+          <Grid.Item col={6} s={12} xs={12} direction="column" alignItems="stretch">
             <FileDrop
               kind="image"
               label="Header Photo"

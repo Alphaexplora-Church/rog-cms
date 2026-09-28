@@ -99,7 +99,7 @@ export function ContentStep({ draft, patch, errors, series, terms, onSaveSeries,
 
       <Section n={next()} title="Title and date">
         <Grid.Root gap={5}>
-          <Grid.Item col={8} s={12} direction="column" alignItems="stretch">
+          <Grid.Item col={8} s={12} xs={12} direction="column" alignItems="stretch">
             <Field.Root name="title" error={errors.title} required>
               <Field.Label>Title</Field.Label>
               <Field.Input
@@ -110,7 +110,7 @@ export function ContentStep({ draft, patch, errors, series, terms, onSaveSeries,
               <Field.Error />
             </Field.Root>
           </Grid.Item>
-          <Grid.Item col={4} s={12} direction="column" alignItems="stretch">
+          <Grid.Item col={4} s={12} xs={12} direction="column" alignItems="stretch">
             <Field.Root name="date" error={errors.date} required hint="The day it was preached">
               <Field.Label>Date</Field.Label>
               <DatePicker
@@ -151,7 +151,7 @@ export function ContentStep({ draft, patch, errors, series, terms, onSaveSeries,
 
         {draft.mediaType === 'youtube' ? (
           <Grid.Root gap={5}>
-            <Grid.Item col={7} s={12} direction="column" alignItems="stretch">
+            <Grid.Item col={7} s={12} xs={12} direction="column" alignItems="stretch">
               <Field.Root
                 name="youtubeUrl"
                 error={errors.youtubeUrl}
@@ -169,7 +169,7 @@ export function ContentStep({ draft, patch, errors, series, terms, onSaveSeries,
                 <Field.Error />
               </Field.Root>
             </Grid.Item>
-            <Grid.Item col={5} s={12} direction="column" alignItems="stretch">
+            <Grid.Item col={5} s={12} xs={12} direction="column" alignItems="stretch">
               <Box
                 hasRadius
                 overflow="hidden"
@@ -194,7 +194,7 @@ export function ContentStep({ draft, patch, errors, series, terms, onSaveSeries,
 
         {draft.mediaType === 'upload' ? (
           <Grid.Root gap={5}>
-            <Grid.Item col={6} s={12} direction="column" alignItems="stretch">
+            <Grid.Item col={6} s={12} xs={12} direction="column" alignItems="stretch">
               <FileDrop
                 kind="video"
                 label="Video file"
@@ -205,7 +205,7 @@ export function ContentStep({ draft, patch, errors, series, terms, onSaveSeries,
                 error={errors.video}
               />
             </Grid.Item>
-            <Grid.Item col={6} s={12} direction="column" alignItems="stretch">
+            <Grid.Item col={6} s={12} xs={12} direction="column" alignItems="stretch">
               <FileDrop
                 kind="image"
                 label={isSeries ? 'Thumbnail (optional)' : 'Thumbnail'}

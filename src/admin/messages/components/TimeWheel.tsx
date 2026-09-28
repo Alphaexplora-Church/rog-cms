@@ -314,6 +314,8 @@ export function TimeWheel({
               fontSize: theme.fontSizes[2],
               fontVariantNumeric: 'tabular-nums',
               textAlign: 'left',
+              whiteSpace: 'nowrap',
+              overflow: 'hidden',
               cursor: 'pointer',
               boxShadow: open ? `${theme.colors.primary600} 0px 0px 0px 2px` : 'none',
               transition: 'border-color 120ms ease-out, box-shadow 120ms ease-out',

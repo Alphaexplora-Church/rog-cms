@@ -136,7 +136,7 @@ export default function EventList() {
             </Box>
           ) : (
             <>
-              <Table colCount={6} rowCount={rows.length + 1}>
+              <Table className="rog-list rog-list-events" colCount={6} rowCount={rows.length + 1}>
                 <Thead>
                   <Tr>
                     <Th><Typography variant="sigma">Event Name</Typography></Th>
@@ -151,8 +151,11 @@ export default function EventList() {
                   {rows.map((r) => (
                     <Tr key={r.documentId} onClick={() => open(r.documentId)} style={{ cursor: 'pointer' }}>
                       <Td style={{ maxWidth: 380 }}>
-                        <Typography fontWeight="semiBold" ellipsis style={{ maxWidth: 360 }}>
+                        <Typography className="rog-cell-title" fontWeight="semiBold" ellipsis style={{ maxWidth: 360 }}>
                           {r.eventName}
+                        </Typography>
+                        <Typography className="rog-show-sm" variant="pi" textColor="neutral600">
+                          {`${formatDate(r.eventDate)} · ${formatTime(r.eventTime)}`}
                         </Typography>
                       </Td>
                       <Td>

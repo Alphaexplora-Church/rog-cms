@@ -677,6 +677,14 @@ body {
   transition: background-color 160ms var(--rog-ease), color 160ms var(--rog-ease);
 }
 
+/* Strapi 5.53 paints nav links white by default, which turned every
+   inactive link (white text) into a blank white box on the dark
+   sidebar and the phone top bar. Transparent at rest; the hover and
+   current-page rules below are more specific, so they still win. */
+.rog-main-nav a {
+  background-color: transparent !important;
+}
+
 .rog-main-nav a:hover {
   background-color: rgba(255, 255, 255, 0.08) !important;
 }
@@ -717,7 +725,11 @@ body.rog-nav-labels .rog-main-nav:hover a span {
   transition-delay: 60ms;
 }
 
-@media (min-width: 960px) {
+/* 1080px is Strapi's own "large" breakpoint — below it the sidebar
+   becomes a top bar with a Menu drawer. Pinning these widths any lower
+   (the old 960px) squashed that top bar into a 240px strip on
+   960–1079px screens. */
+@media (min-width: 1080px) {
   body.rog-nav-labels .rog-main-nav {
     width: 60px !important;
     min-width: 60px !important;
@@ -745,6 +757,142 @@ body.rog-nav-labels .rog-main-nav:hover a span {
 .rog-section-card:hover {
   transform: translateY(-2px);
   box-shadow: 0 12px 28px -12px rgb(27 122 112 / 0.35);
+}
+
+/* ------------------------------------------------------------
+   Phones and tablets (below Strapi's 1080px "large" breakpoint).
+
+   Strapi turns the sidebar into a top bar with a Menu button and a
+   drop-down drawer (#burger-menu). The drawer is portalled outside
+   #strapi, so it gets the font, the dark sidebar look and the
+   hidden-entries rule again here. Everything is keyed to real
+   routes, ARIA attributes and classes this file or our own
+   components set — never a styled-components hash.
+   ------------------------------------------------------------ */
+@media (max-width: 1079px) {
+  .rog-main-nav {
+    border-right: 0 !important;
+    border-bottom: 1px solid #262626 !important;
+  }
+
+  .rog-main-nav a {
+    margin: 0 !important;
+  }
+
+  /* Strapi paints the Menu button white — a blank white box on our
+     dark bar. */
+
+  .rog-main-nav button {
+    background: rgba(255, 255, 255, 0.06) !important;
+    border: 1px solid #333333 !important;
+    color: #ffffff !important;
+  }
+
+  .rog-main-nav button svg,
+  .rog-main-nav button svg path {
+    fill: #ffffff !important;
+    color: #ffffff !important;
+  }
+}
+
+#burger-menu {
+  font-family: ${FONT_STACK};
+  background: linear-gradient(180deg, #161616 0%, #0d0d0d 100%) !important;
+  border-bottom: 1px solid #262626 !important;
+}
+
+#burger-menu > div,
+#burger-menu [data-radix-scroll-area-viewport] {
+  background: transparent !important;
+}
+
+#burger-menu a {
+  background-color: transparent !important;
+  color: #ffffff !important;
+  border-radius: 10px;
+  transition: background-color 160ms var(--rog-ease);
+}
+
+#burger-menu a svg {
+  fill: currentColor !important;
+  color: inherit !important;
+}
+
+#burger-menu a span {
+  color: inherit !important;
+}
+
+#burger-menu a:hover {
+  background-color: rgba(255, 255, 255, 0.08) !important;
+}
+
+#burger-menu a[aria-current="page"] {
+  background-color: rgb(27 122 112 / 0.28) !important;
+  color: var(--rog-teal-light) !important;
+}
+
+#burger-menu [role="separator"] {
+  background: #262626 !important;
+}
+
+#burger-menu button,
+#burger-menu button span {
+  color: #ffffff !important;
+}
+
+#burger-menu li:has(a[href^="/admin/content-manager"]),
+#burger-menu li:has(a[href^="/admin/plugins/upload"]),
+#burger-menu li:has(a[href^="/admin/plugins/content-type-builder"]),
+#burger-menu li:has(a[href^="/admin/plugins/cloud"]),
+#burger-menu li:has(a[href*="market.strapi.io"]) {
+  display: none !important;
+}
+
+/* ------------------------------------------------------------
+   Manage Contents lists and wizards on small screens.
+   The classes are set by our own components (EventList,
+   MessageList, MinistryList and the Review/Summary steps).
+   ------------------------------------------------------------ */
+.rog-show-sm {
+  display: none !important;
+}
+
+@media (max-width: 767px) {
+  .rog-show-sm {
+    display: block !important;
+    margin-top: 2px;
+  }
+
+  /* Keep the name, status and edit button; the hidden columns'
+     key facts move under the name (the .rog-show-sm line). */
+  .rog-list-events :is(th, td):is(:nth-child(2), :nth-child(3), :nth-child(4)),
+  .rog-list-messages :is(th, td):is(:nth-child(2), :nth-child(3), :nth-child(4)),
+  .rog-list-ministries :is(th, td):is(:nth-child(2), :nth-child(3)) {
+    display: none !important;
+  }
+
+  .rog-list th,
+  .rog-list td {
+    padding-left: 8px !important;
+    padding-right: 8px !important;
+  }
+
+  .rog-list .rog-cell-title {
+    max-width: calc(100vw - 240px) !important;
+  }
+}
+
+@media (max-width: 519px) {
+  /* Review rows: the label goes on its own line so the value keeps
+     the full width instead of a 90px sliver beside a 140px label. */
+  .rog-review-row {
+    flex-wrap: wrap !important;
+    row-gap: 4px !important;
+  }
+
+  .rog-review-label {
+    flex: 1 1 100% !important;
+  }
 }
 
 /* Secondary navs (Content Manager, Settings, etc.) — leave
