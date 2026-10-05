@@ -48,6 +48,31 @@ import type { Core } from '@strapi/strapi'
  * domain plus a Vercel preview URL) is supported for QA on more than one
  * deployed origin at a time.
  */
+/**
+ * ── PRODUCTION HARDENING, 2026-10-05 ─────────────────────────────────────
+ * - CORS: FRONTEND_URL entries are trimmed, stripped of any trailing slash
+ *   (an origin never has one, so "https://x.vercel.app/" would never match)
+ *   and dropped if they are not http(s) URLs (a stray "#" or blank value
+ *   would otherwise be silently ignored by the browser's check).
+ * - CSP: `media-src` (audio/video sermons) and `frame-src` (PDF preview)
+ *   now allow Supabase Storage too. The host is taken from S3_ENDPOINT so
+ *   only THIS project is allowed; if that is unset the wildcard is used.
+ * - `global::rate-limit` (src/middlewares/rate-limit.ts) sits before
+ *   `strapi::body` so abusive requests are rejected before parsing a body.
+ */
+const frontendOrigins = (process.env.FRONTEND_URL ?? '')
+  .split(',')
+  .map((s) => s.trim().replace(/\/+$/, ''))
+  .filter((s) => /^https?:\/\//.test(s))
+
+const SUPABASE = (() => {
+  try {
+    return new URL(process.env.S3_ENDPOINT ?? '').origin
+  } catch {
+    return 'https://*.supabase.co'
+  }
+})()
+
 const config: Core.Config.Middlewares = [
   'strapi::logger',
   'strapi::errors',
@@ -63,8 +88,10 @@ const config: Core.Config.Middlewares = [
             'blob:',
             'https://market-assets.strapi.io',
             'https://i.ytimg.com',
-            'https://*.supabase.co',
+            SUPABASE,
           ],
+          'media-src': ["'self'", 'data:', 'blob:', SUPABASE],
+          'frame-src': ["'self'", SUPABASE],
         },
       },
     },
@@ -72,13 +99,13 @@ const config: Core.Config.Middlewares = [
   {
     name: 'strapi::cors',
     config: {
-      origin: [
-        'http://localhost:5173',
-        'http://localhost:3000',
-        ...(process.env.FRONTEND_URL ? process.env.FRONTEND_URL.split(',').map((s) => s.trim()) : []),
-      ],
+      origin: ['http://localhost:5173', 'http://localhost:3000', ...frontendOrigins],
+      methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'HEAD', 'OPTIONS'],
+      headers: ['Content-Type', 'Authorization', 'Origin', 'Accept'],
+      keepHeaderOnError: true,
     },
   },
+  'global::rate-limit',
   { name: 'strapi::poweredBy', config: { poweredBy: 'River of God - Alphaexplora Core' } },
   'strapi::query',
   'strapi::body',

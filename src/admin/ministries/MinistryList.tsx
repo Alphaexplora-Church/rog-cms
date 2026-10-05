@@ -21,7 +21,8 @@ import { ChevronLeft, ChevronRight, Pencil, Plus } from '@strapi/icons'
 import { Layouts, Page, useFetchClient } from '@strapi/strapi/admin'
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { TYPE_LABEL, errorMessage, listMinistries, type MinistryRow, type MinistryType } from './api'
+import { DeleteButton } from '../manage-contents/DeleteButton'
+import { TYPE_LABEL, deleteMinistry, errorMessage, listMinistries, type MinistryRow, type MinistryType } from './api'
 
 /**
  * Ministries — the wizard's home, same table pattern as EventList.tsx and
@@ -85,6 +86,14 @@ export default function MinistryList() {
   }, [page, search, type, attempt])
 
   const open = (documentId: string) => navigate(documentId)
+
+  // After a delete: step back a page if that was the last row on it,
+  // otherwise just reload the current page.
+  const remove = async (documentId: string) => {
+    await deleteMinistry(client, documentId)
+    if (rows.length === 1 && page > 1) setPage((p) => p - 1)
+    else setAttempt((a) => a + 1)
+  }
   const filtered = !!search || type !== 'all'
 
   return (
@@ -196,9 +205,17 @@ export default function MinistryList() {
                         </Badge>
                       </Td>
                       <Td onClick={(e) => e.stopPropagation()}>
-                        <IconButton label={`Edit ${r.name}`} variant="ghost" onClick={() => open(r.documentId)}>
-                          <Pencil />
-                        </IconButton>
+                        <Flex gap={1} justifyContent="flex-end">
+                          <IconButton label={`Edit ${r.name}`} variant="ghost" onClick={() => open(r.documentId)}>
+                            <Pencil />
+                          </IconButton>
+                          <DeleteButton
+                            name={r.name}
+                            kind="ministry"
+                            onDelete={() => remove(r.documentId)}
+                            describeError={errorMessage}
+                          />
+                        </Flex>
                       </Td>
                     </Tr>
                   ))}

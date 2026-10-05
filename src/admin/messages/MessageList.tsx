@@ -19,7 +19,8 @@ import { ChevronLeft, ChevronRight, Pencil, Plus } from '@strapi/icons'
 import { Layouts, Page, useFetchClient } from '@strapi/strapi/admin'
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { errorMessage, listMessages, type MessageRow } from './api'
+import { DeleteButton } from '../manage-contents/DeleteButton'
+import { deleteMessage, errorMessage, listMessages, type MessageRow } from './api'
 import { formatDate } from './rules'
 
 /**
@@ -85,6 +86,14 @@ export default function MessageList() {
   }, [page, search, attempt])
 
   const open = (documentId: string) => navigate(documentId)
+
+  // After a delete: step back a page if that was the last row on it,
+  // otherwise just reload the current page.
+  const remove = async (documentId: string) => {
+    await deleteMessage(client, documentId)
+    if (rows.length === 1 && page > 1) setPage((p) => p - 1)
+    else setAttempt((a) => a + 1)
+  }
 
   return (
     <Page.Main>
@@ -190,9 +199,17 @@ export default function MessageList() {
                         </Badge>
                       </Td>
                       <Td onClick={(e) => e.stopPropagation()}>
-                        <IconButton label={`Edit ${r.title}`} variant="ghost" onClick={() => open(r.documentId)}>
-                          <Pencil />
-                        </IconButton>
+                        <Flex gap={1} justifyContent="flex-end">
+                          <IconButton label={`Edit ${r.title}`} variant="ghost" onClick={() => open(r.documentId)}>
+                            <Pencil />
+                          </IconButton>
+                          <DeleteButton
+                            name={r.title}
+                            kind="message"
+                            onDelete={() => remove(r.documentId)}
+                            describeError={errorMessage}
+                          />
+                        </Flex>
                       </Td>
                     </Tr>
                   ))}

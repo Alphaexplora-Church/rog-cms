@@ -401,3 +401,9 @@ export async function publishMessage(
   const { data } = await client.post<{ data: Raw }>(`${CM}/${UID.sermon}/actions/publish`, body)
   return data.data.documentId
 }
+
+/** Permanently delete one message (draft and published copies). Uploaded
+ *  files stay in the Media Library. Added 2026-09-29. */
+export async function deleteMessage(client: FetchClient, documentId: string): Promise<void> {
+  await client.del(`${CM}/${UID.sermon}/${documentId}`)
+}

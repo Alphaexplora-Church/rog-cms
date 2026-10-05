@@ -1,7 +1,8 @@
-import type { StrapiApp } from '@strapi/strapi/admin'
+import { getFetchClient, type StrapiApp } from '@strapi/strapi/admin'
 import { Folder } from '@strapi/icons'
 import rogLogo from './extensions/rog-logo.png'
 import rogFavicon from './extensions/favicon.png'
+import { ROG_WIDGETS, ROG_WIDGET_UIDS } from './dashboard'
 
 /**
  * ROG CMS — admin panel white-label.
@@ -33,12 +34,14 @@ import rogFavicon from './extensions/favicon.png'
  *     pseudo-classes, and attribute selectors.
  *   · Elements this file creates itself, which Strapi cannot rebuild away.
  *
- * Deliberately NOT attempted: reshaping Strapi's panels, cards, tables or
- * the six default dashboard widgets. Strapi's widget API can ADD a widget
- * but cannot remove or reorder the defaults, so a genuine relayout of that
- * area is only reachable through exactly the hashed-class CSS ruled out
- * above. Adding a custom widget alongside them is the durable path if that
- * area ever matters.
+ * Deliberately NOT attempted: reshaping Strapi's panels, cards and tables.
+ *
+ * THE DASHBOARD — this note used to say the default widgets couldn't be
+ * removed. That was true of `widgets.register(<widget>)`, which only adds.
+ * Strapi 5.53's registry also takes a REDUCER — `register((prev) => next)` —
+ * and because plugins register before this file's `register()` runs, the
+ * reducer sees the full default list and can replace it. No CSS, no hashed
+ * class names: see `register()` below and ./dashboard/index.ts.
  *
  * ── THE PALETTE ──────────────────────────────────────────────────────────
  * Taken from the live site, not approximated. `rog-website-ui` builds on
@@ -299,6 +302,21 @@ export default {
      * because this is meant to become their one replacement, one section at
      * a time.
      */
+    /**
+     * The homepage (Jude, 2026-09-30: "yung mga widget na nandon random
+     * lang… gusto ko related doon sa content nila at content natin"). Swaps
+     * Strapi's default widgets for ROG's five — see ./dashboard/index.ts.
+     *
+     * A reducer that ignores `prev` replaces the whole list, including every
+     * plugin's widgets (Last edited / Last published entries, Entries chart,
+     * Profile, Project statistics), because plugins register before this runs.
+     * The one exception is Strapi's "Last activity" (audit logs) widget, an
+     * Enterprise feature that registers AFTER this hook; Community installs
+     * don't have it, and if ROG ever moves to Enterprise it is one more
+     * filter in a bootstrap step.
+     */
+    app.widgets.register(() => ROG_WIDGETS)
+
     app.addMenuLink({
       to: 'manage-contents',
       icon: Folder,
@@ -401,6 +419,44 @@ export default {
     }
     redirectBlockedRoute()
     window.setInterval(redirectBlockedRoute, 400)
+
+    /* ── Homepage layout reset ────────────────────────────────────────────
+       Strapi saves each admin's homepage layout (order, widths, deleted
+       widgets) per user, and a saved layout is an ALLOW-LIST: any widget not
+       in it is hidden. So an admin who ever dragged or deleted a default
+       widget would open the homepage and find ROG's widgets missing.
+
+       On the homepage only, once per page load: if a layout is saved and
+       either contains none of ROG's widgets or still names Strapi's old
+       ones, replace it with ROG's five. A saved layout made only of ROG
+       widgets — someone reordering, resizing or removing one of them — is
+       left alone. Silent on any failure (the default layout then applies),
+       and reloads at most once per browser session so a rejected save can
+       never loop. */
+    let layoutChecked = false
+    const resetHomepageLayout = async () => {
+      if (layoutChecked || !/^\/admin\/?$/.test(window.location.pathname)) return
+      layoutChecked = true
+      try {
+        const client = getFetchClient()
+        const res = await client.get<{ data: { widgets?: { uid: string }[] } | null }>('/admin/homepage/layout')
+        const saved = res.data?.data?.widgets
+        if (!Array.isArray(saved)) return
+        const ours = new Set(ROG_WIDGET_UIDS)
+        const needsReset = saved.some((w) => !ours.has(w.uid)) || !saved.some((w) => ours.has(w.uid))
+        if (!needsReset) return
+        await client.put('/admin/homepage/layout', {
+          widgets: ROG_WIDGET_UIDS.map((uid, i) => ({ uid, width: i === ROG_WIDGET_UIDS.length - 1 ? 12 : 6 })),
+        })
+        if (window.sessionStorage.getItem('rog-layout-reset')) return
+        window.sessionStorage.setItem('rog-layout-reset', '1')
+        window.location.reload()
+      } catch {
+        /* leave Strapi's own layout handling to cope */
+      }
+    }
+    void resetHomepageLayout()
+    window.setInterval(() => void resetHomepageLayout(), 400)
 
     /* ── Sidebar labels, only if Strapi is still hiding them ──────────────
        Strapi renders a real text label beside every nav icon and hides it
@@ -878,7 +934,7 @@ body.rog-nav-labels .rog-main-nav:hover a span {
   }
 
   .rog-list .rog-cell-title {
-    max-width: calc(100vw - 240px) !important;
+    max-width: calc(100vw - 280px) !important;
   }
 }
 

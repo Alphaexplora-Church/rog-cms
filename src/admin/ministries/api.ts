@@ -263,3 +263,9 @@ export async function publishMinistry(
   const { data } = await client.post<{ data: Raw }>(`${CM}/${UID.ministry}/actions/publish`, body)
   return data.data.documentId
 }
+
+/** Permanently delete one ministry (draft and published copies). Uploaded
+ *  files stay in the Media Library. Added 2026-09-29. */
+export async function deleteMinistry(client: FetchClient, documentId: string): Promise<void> {
+  await client.del(`${CM}/${UID.ministry}/${documentId}`)
+}

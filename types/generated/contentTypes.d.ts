@@ -460,6 +460,7 @@ export interface ApiEventEvent extends Struct.CollectionTypeSchema {
       Schema.Attribute.Private;
     eventDate: Schema.Attribute.Date & Schema.Attribute.Required;
     eventDescription: Schema.Attribute.Text & Schema.Attribute.Required;
+    eventEndTime: Schema.Attribute.Time;
     eventLocation: Schema.Attribute.String & Schema.Attribute.Required;
     eventName: Schema.Attribute.String & Schema.Attribute.Required;
     eventTime: Schema.Attribute.Time & Schema.Attribute.Required;
@@ -468,6 +469,7 @@ export interface ApiEventEvent extends Struct.CollectionTypeSchema {
     localizations: Schema.Attribute.Relation<'oneToMany', 'api::event.event'> &
       Schema.Attribute.Private;
     publishedAt: Schema.Attribute.DateTime;
+    registrationLink: Schema.Attribute.String;
     slug: Schema.Attribute.UID<'eventName'> & Schema.Attribute.Required;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &

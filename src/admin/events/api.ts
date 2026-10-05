@@ -225,3 +225,9 @@ export async function publishEvent(
   const { data } = await client.post<{ data: Raw }>(`${CM}/${UID.event}/actions/publish`, body)
   return data.data.documentId
 }
+
+/** Permanently delete one event (draft and published copies). Uploaded
+ *  files stay in the Media Library. Added 2026-09-29. */
+export async function deleteEvent(client: FetchClient, documentId: string): Promise<void> {
+  await client.del(`${CM}/${UID.event}/${documentId}`)
+}

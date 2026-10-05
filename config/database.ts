@@ -50,7 +50,20 @@ const config = ({ env }: Core.Config.Shared.ConfigParams): Core.Config.Database 
         },
         schema: env('DATABASE_SCHEMA', 'public'),
       },
-      pool: { min: env.int('DATABASE_POOL_MIN', 2), max: env.int('DATABASE_POOL_MAX', 10) },
+      /* Sized for Supabase's Session pooler (port 5432): a small pool, no idle
+         connections held, and retry-on-create so a restart that briefly meets a
+         full pooler waits instead of crashing. Render overlaps old+new instances
+         during a deploy, so 2 x max must stay under the pooler's pool size. */
+      pool: {
+        min: env.int('DATABASE_POOL_MIN', 0),
+        max: env.int('DATABASE_POOL_MAX', 5),
+        acquireTimeoutMillis: env.int('DATABASE_ACQUIRE_TIMEOUT', 30000),
+        createTimeoutMillis: env.int('DATABASE_CREATE_TIMEOUT', 15000),
+        idleTimeoutMillis: env.int('DATABASE_IDLE_TIMEOUT', 30000),
+        reapIntervalMillis: 1000,
+        createRetryIntervalMillis: 2000,
+        propagateCreateError: false,
+      },
     },
     sqlite: {
       client: 'sqlite',

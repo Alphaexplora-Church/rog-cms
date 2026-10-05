@@ -64,6 +64,62 @@ async function grantPublicReadAccess(strapi: Core.Strapi) {
   }
 }
 
+/**
+ * ── REPAIR OLD SUPABASE IMAGE LINKS, 2026-09-29 ──────────────────────────
+ * Files uploaded before `baseUrl` was added to config/plugins.ts were saved
+ * with a link Supabase doesn't serve (`https://<project>.supabase.co/<bucket>/<file>`,
+ * or the same under `/storage/v1/s3/`). The picture really is in the bucket,
+ * but the website gets a 404, so it shows nothing. The link that works is
+ * `https://<project>.supabase.co/storage/v1/object/public/<bucket>/<file>`.
+ *
+ * The upload config only affects NEW uploads, so this rewrites the saved
+ * link (and every resized copy in `formats`) of any old file on boot. Safe
+ * to run every restart: a file that already has the right link is skipped.
+ * Does nothing when S3 isn't configured (plain local/dev).
+ */
+async function repairSupabaseFileUrls(strapi: Core.Strapi) {
+  const endpoint = (process.env.S3_ENDPOINT ?? '').replace(/\/+$/, '')
+  const bucket = process.env.S3_BUCKET ?? ''
+  if (!endpoint || !bucket || !endpoint.includes('/storage/v1/s3')) return
+
+  const host = endpoint.replace('/storage/v1/s3', '')
+  const good = `${host}/storage/v1/object/public/${bucket}/`
+  const bad = [`${endpoint}/${bucket}/`, `${host}/${bucket}/`]
+  const fix = (url: unknown) => {
+    if (typeof url !== 'string') return url
+    const prefix = bad.find((b) => url.startsWith(b))
+    return prefix ? good + url.slice(prefix.length) : url
+  }
+
+  const files = await strapi.db.query('plugin::upload.file').findMany({
+    where: { url: { $startsWith: host } },
+    select: ['id', 'url', 'formats'],
+  })
+
+  let repaired = 0
+  for (const file of files) {
+    const url = fix(file.url)
+    let formats = file.formats
+    let formatsChanged = false
+    if (formats && typeof formats === 'object') {
+      formats = Object.fromEntries(
+        Object.entries(formats as Record<string, { url?: string }>).map(([k, f]) => {
+          const next = fix(f?.url)
+          if (next !== f?.url) formatsChanged = true
+          return [k, { ...f, url: next }]
+        }),
+      )
+    }
+    if (url === file.url && !formatsChanged) continue
+    await strapi.db.query('plugin::upload.file').update({
+      where: { id: file.id },
+      data: { url, formats },
+    })
+    repaired += 1
+  }
+  if (repaired) strapi.log.info(`rog-cms bootstrap: repaired ${repaired} Supabase image link(s).`)
+}
+
 export default {
   /**
    * An asynchronous register function that runs before
@@ -82,6 +138,7 @@ export default {
    */
   async bootstrap({ strapi }: { strapi: Core.Strapi }) {
     await grantPublicReadAccess(strapi)
+    await repairSupabaseFileUrls(strapi)
     // Ministries (2026-09-28): fills an EMPTY collection once with the
     // website's current 20 ministries — see api/ministry/seed.ts.
     await seedMinistries(strapi)
