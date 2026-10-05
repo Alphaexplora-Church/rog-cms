@@ -1,0 +1,39 @@
+{
+    "kind": "collectionType",
+    "collectionName": "series",
+    "info": {
+        "singularName": "series",
+        "pluralName": "sermon-series",
+        "displayName": "Series",
+        "description": "A named group of sermons (e.g. 'Sunday Service', 'Exodus'). The cover image becomes both the series' card in the Media Library grid and the banner on its own detail page."
+    },
+    "options": {
+        "draftAndPublish": true
+    },
+    "pluginOptions": {},
+    "attributes": {
+        "title": {
+            "type": "string",
+            "required": true
+        },
+        "slug": {
+            "type": "uid",
+            "targetField": "title",
+            "required": true
+        },
+        "coverImage": {
+            "type": "media",
+            "multiple": false,
+            "required": false,
+            "allowedTypes": [
+                "images"
+            ]
+        },
+        "sermons": {
+            "type": "relation",
+            "relation": "oneToMany",
+            "target": "api::sermon.sermon",
+            "mappedBy": "series"
+        }
+    }
+}

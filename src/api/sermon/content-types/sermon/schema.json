@@ -1,0 +1,96 @@
+{
+  "kind": "collectionType",
+  "collectionName": "sermons",
+  "info": {
+    "singularName": "sermon",
+    "pluralName": "sermons",
+    "displayName": "Sermon",
+    "description": "One message in the Media Library. Pick a Category first: Series (part of a named series like 'I AM' — choose an existing one or create a new one with its cover) or Sermon (a Sunday or Midweek message). Then pick a Media Type: YouTube (paste the link, thumbnail is automatic) or Upload (an MP4 plus a thumbnail you upload yourself)."
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "category": {
+      "type": "enumeration",
+      "enum": [
+        "sermon",
+        "series"
+      ],
+      "default": "sermon",
+      "required": true
+    },
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "slug": {
+      "type": "uid",
+      "targetField": "title",
+      "required": true
+    },
+    "date": {
+      "type": "date",
+      "required": true
+    },
+    "series": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::series.series",
+      "inversedBy": "sermons"
+    },
+    "mediaType": {
+      "type": "enumeration",
+      "enum": [
+        "youtube",
+        "upload"
+      ],
+      "default": "youtube",
+      "required": true
+    },
+    "youtubeUrl": {
+      "type": "string",
+      "required": false
+    },
+    "youtubeVideoId": {
+      "type": "string",
+      "required": false
+    },
+    "videoFile": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
+      "allowedTypes": [
+        "videos"
+      ]
+    },
+    "thumbnail": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
+      "allowedTypes": [
+        "images"
+      ]
+    },
+    "speaker": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::speaker.speaker",
+      "inversedBy": "sermons"
+    },
+    "topics": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "api::topic.topic",
+      "inversedBy": "sermons",
+      "required": true
+    },
+    "scripture": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::scripture.scripture",
+      "inversedBy": "sermons"
+    }
+  }
+}

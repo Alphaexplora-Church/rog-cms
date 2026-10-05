@@ -1,0 +1,57 @@
+{
+  "kind": "collectionType",
+  "collectionName": "events",
+  "info": {
+    "singularName": "event",
+    "pluralName": "events",
+    "displayName": "Event",
+    "description": "One upcoming event on the public Events page (Gatherings, retreats, conferences and other dated one-offs — separate from the recurring Weekly Gatherings schedule, which is not CMS-managed)."
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "eventName": {
+      "type": "string",
+      "required": true
+    },
+    "slug": {
+      "type": "uid",
+      "targetField": "eventName",
+      "required": true
+    },
+    "eventDate": {
+      "type": "date",
+      "required": true
+    },
+    "eventTime": {
+      "type": "time",
+      "required": true
+    },
+    "eventEndTime": {
+      "type": "time",
+      "required": false
+    },
+    "eventLocation": {
+      "type": "string",
+      "required": true
+    },
+    "registrationLink": {
+      "type": "string",
+      "required": false
+    },
+    "eventDescription": {
+      "type": "text",
+      "required": true
+    },
+    "headerPhoto": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
+      "allowedTypes": [
+        "images"
+      ]
+    }
+  }
+}

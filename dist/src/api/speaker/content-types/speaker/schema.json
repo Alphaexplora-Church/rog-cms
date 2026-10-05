@@ -1,0 +1,31 @@
+{
+    "kind": "collectionType",
+    "collectionName": "speakers",
+    "info": {
+        "singularName": "speaker",
+        "pluralName": "speakers",
+        "displayName": "Speaker",
+        "description": "A person who preaches. Add once here, then select from the dropdown on any Sermon — keeps names spelled consistently for filtering on the site."
+    },
+    "options": {
+        "draftAndPublish": false
+    },
+    "pluginOptions": {},
+    "attributes": {
+        "name": {
+            "type": "string",
+            "required": true
+        },
+        "slug": {
+            "type": "uid",
+            "targetField": "name",
+            "required": true
+        },
+        "sermons": {
+            "type": "relation",
+            "relation": "oneToMany",
+            "target": "api::sermon.sermon",
+            "mappedBy": "speaker"
+        }
+    }
+}
