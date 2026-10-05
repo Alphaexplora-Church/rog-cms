@@ -1,0 +1,47 @@
+# Builds the Strapi admin panel on GitHub's runner (7GB RAM) and publishes the
+# result to the `deploy` branch, which Render watches. Render then only runs
+# `npm ci --omit=dev` + `npm start` and never has to build (that step needs
+# ~1.8GB and OOMs on a 512MB plan).
+name: Build & publish deploy branch
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: deploy-branch
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      - name: Build (TypeScript + admin panel)
+        run: npm run build
+        env:
+          NODE_OPTIONS: --max-old-space-size=4096
+
+      - name: Publish to deploy branch
+        run: |
+          mkdir -p public/uploads && touch public/uploads/.gitkeep
+          rm -rf .github
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git checkout --orphan deploy-tmp
+          git add -A
+          git add -f dist public/uploads/.gitkeep
+          git commit -m "deploy: build of ${GITHUB_SHA::7}"
+          git push -f origin deploy-tmp:deploy
