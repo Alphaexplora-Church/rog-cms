@@ -1,0 +1,31 @@
+{
+    "kind": "collectionType",
+    "collectionName": "topics",
+    "info": {
+        "singularName": "topic",
+        "pluralName": "topics",
+        "displayName": "Topic",
+        "description": "A subject tag for filtering sermons (e.g. 'Hope', 'End Times'). Add once, then select — one sermon can carry more than one topic."
+    },
+    "options": {
+        "draftAndPublish": false
+    },
+    "pluginOptions": {},
+    "attributes": {
+        "title": {
+            "type": "string",
+            "required": true
+        },
+        "slug": {
+            "type": "uid",
+            "targetField": "title",
+            "required": true
+        },
+        "sermons": {
+            "type": "relation",
+            "relation": "manyToMany",
+            "target": "api::sermon.sermon",
+            "mappedBy": "topics"
+        }
+    }
+}
