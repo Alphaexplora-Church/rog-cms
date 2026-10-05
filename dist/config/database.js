@@ -61,7 +61,6 @@ const config = ({ env }) => {
                 idleTimeoutMillis: env.int('DATABASE_IDLE_TIMEOUT', 30000),
                 reapIntervalMillis: 1000,
                 createRetryIntervalMillis: 2000,
-                propagateCreateError: false,
             },
         },
         sqlite: {

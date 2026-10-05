@@ -106,6 +106,7 @@ const config: Core.Config.Middlewares = [
     },
   },
   'global::rate-limit',
+  'global::cache-control',
   { name: 'strapi::poweredBy', config: { poweredBy: 'River of God - Alphaexplora Core' } },
   'strapi::query',
   'strapi::body',

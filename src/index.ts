@@ -91,6 +91,12 @@ async function repairSupabaseFileUrls(strapi: Core.Strapi) {
     return prefix ? good + url.slice(prefix.length) : url
   }
 
+  // One-time: skip the full-table scan on every boot once it has run for this
+  // exact URL prefix. Delete the store key to force a re-run.
+  const store = strapi.store({ type: 'core', name: 'rog-cms' })
+  const KEY = 'supabase-url-repair-done'
+  if ((await store.get({ key: KEY })) === good) return
+
   const files = await strapi.db.query('plugin::upload.file').findMany({
     where: { url: { $startsWith: host } },
     select: ['id', 'url', 'formats'],
@@ -118,6 +124,7 @@ async function repairSupabaseFileUrls(strapi: Core.Strapi) {
     repaired += 1
   }
   if (repaired) strapi.log.info(`rog-cms bootstrap: repaired ${repaired} Supabase image link(s).`)
+  await store.set({ key: KEY, value: good })
 }
 
 export default {

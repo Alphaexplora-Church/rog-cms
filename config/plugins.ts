@@ -75,6 +75,9 @@ const config = ({ env }: Core.Config.Shared.ConfigParams): Core.Config.Plugin =>
   },
   upload: {
     config: {
+      // Upload cap (RAM): Strapi buffers each upload through formidable before
+      // it goes to storage, so the cap bounds the worst-case memory spike.
+      sizeLimit: env.int('UPLOAD_SIZE_LIMIT_MB', 100) * 1024 * 1024,
       ...(s3Enabled
         ? {
             provider: 'aws-s3',
